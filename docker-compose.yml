@@ -1,0 +1,11 @@
+version: '3'
+services:
+
+  chalice:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile_chalice
+    volumes:
+      - ./my-sample-app:/opt/app
+    env_file:
+      - .env.aws-credentials

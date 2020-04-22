@@ -1,0 +1,26 @@
+version: 0.1
+phases:
+  install:
+    commands:
+      - pip install -u awscli pip
+      - aws --version
+  pre_build: # ビルドに必要な依存ライブラリをインストール
+    commands:
+      - pip install -r requirements.txt
+      - pip install -r test_requirements.txt
+  build: # テストを実行
+    commands:
+      - flake8
+      - pytest -vv
+  post_build:
+    commands:
+      - sudo pip install 'chalice>=1.13.0,<1.14.0'
+      - sudo pip install -r requirements.txt
+      - chalice package /tmp/packaged
+      - aws cloudformation package --template-file /tmp/packaged/sam.json --s3-bucket ${APP_S3_BUCKET} --output-template-file transformed.yaml
+
+    
+artifacts:
+  type: zip
+  files:
+    - transformed.yaml
